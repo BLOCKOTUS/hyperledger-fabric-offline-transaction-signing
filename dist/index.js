@@ -27,8 +27,10 @@ var generateSignedProposal = function generateSignedProposal(_ref2) {
       chaincode = _ref2.chaincode,
       fcn = _ref2.fcn,
       args = _ref2.args;
-  var idx = client.newIdentityContext(user);
-  var endorsement = channel.newEndorsement(chaincode);
+  var appClient = typeof client === 'string' ? new _fabricCommon.Client(client) : client;
+  var appChannel = typeof channel === 'string' ? new _fabricCommon.Channel(channel, appClient) : channel;
+  var idx = appClient.newIdentityContext(user);
+  var endorsement = appChannel.newEndorsement(chaincode);
   var build_options = {
     fcn: fcn,
     args: args

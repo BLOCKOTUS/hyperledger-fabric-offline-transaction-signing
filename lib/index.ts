@@ -1,4 +1,4 @@
-import { User } from 'fabric-common';
+import { Client, User, Channel } from 'fabric-common';
 
 import type { User as UserType } from 'fabric-common';
 import type { 
@@ -22,8 +22,10 @@ export const generateSignedProposal = ({
     fcn,
     args,
 }: GenerateSignedProposalArgs) => {
-    const idx = client.newIdentityContext(user);
-    const endorsement = channel.newEndorsement(chaincode);
+    const appClient = typeof client === 'string' ? new Client(client) : client;
+    const appChannel = typeof channel === 'string' ? new Channel(channel, appClient) : channel;
+    const idx = appClient.newIdentityContext(user);
+    const endorsement = appChannel.newEndorsement(chaincode);
     const build_options = {fcn, args};
     const proposalBytes = endorsement.build(idx, build_options);
     return proposalBytes;

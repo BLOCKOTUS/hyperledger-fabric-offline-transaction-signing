@@ -1,4 +1,4 @@
-import type { Channel, Client, User } from 'fabric-common';
+import type { Channel, User, Client } from 'fabric-common';
 
 export type CreateUserArgs = {
     name: string, 
@@ -9,10 +9,10 @@ export type CreateUserArgs = {
 };
 
 export type GenerateSignedProposalArgs = {
-    client: Client,
+    client: Client | string,
+    channel: Channel | string,
     user: User,
     chaincode: string,
-    channel: Channel,
     fcn: string,
     args: Array<string>,
 };
