@@ -2,7 +2,8 @@
   "name": "hyperledger-fabric-offline-transaction-signing",
   "version": "0.2.5-alpha",
   "description": "Hyperledger Fabric offline transaction signing library. Sign a transaction outside of the application.",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "types/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "tslint -c tslint.json './lib/*.ts'  -e './node_modules/**'",
