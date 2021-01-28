@@ -15,9 +15,9 @@ export const createUser = ({
 }: CreateUserArgs): UserType => User.createUser(name, password, mspid, signedCertPem, privateKeyPEM);
 
 export const generateSignedProposal = ({
-    client,
+    client = 'blockotus',
     user,
-    channel,
+    channel = 'mychannel',
     chaincode,
     fcn,
     args,

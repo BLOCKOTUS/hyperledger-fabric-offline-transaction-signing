@@ -9,8 +9,8 @@ export type CreateUserArgs = {
 };
 
 export type GenerateSignedProposalArgs = {
-    client: Client | string,
-    channel: Channel | string,
+    client?: Client | string,
+    channel?: Channel | string,
     user: User,
     chaincode: string,
     fcn: string,
