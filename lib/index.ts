@@ -1,4 +1,18 @@
-import type { GenerateSignedProposalArgs } from '../types';
+import { User } from 'fabric-common';
+
+import type { User as UserType } from 'fabric-common';
+import type { 
+    GenerateSignedProposalArgs,
+    CreateUserArgs,
+ } from '../types';
+
+export const createUser = ({
+    name, 
+    password,
+    mspid,
+    signedCertPem,
+    privateKeyPEM,
+}: CreateUserArgs): UserType => User.createUser(name, password, mspid, signedCertPem, privateKeyPEM);
 
 export const generateSignedProposal = ({
     client,
