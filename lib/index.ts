@@ -1,11 +1,16 @@
-import * as fc from 'fabric-common';
-
-import type { GenerateSignedProposalProps } from '../types';
+import type { GenerateSignedProposalArgs } from '../types';
 
 export const generateSignedProposal = ({
+    client,
     user,
+    channel,
+    chaincode,
+    fcn,
     args,
-}:  GenerateSignedProposalProps) => {
+}: GenerateSignedProposalArgs) => {
     const idx = client.newIdentityContext(user);
-    const endorsement = channel.newEndorsement(chaincode_name);
+    const endorsement = channel.newEndorsement(chaincode);
+    const build_options = {fcn, args};
+    const proposalBytes = endorsement.build(idx, build_options);
+    return proposalBytes;
 };
