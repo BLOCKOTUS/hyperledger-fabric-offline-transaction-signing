@@ -12,12 +12,12 @@
 </a>
 <a href="https://github.com/BLOCKOTUS/admins">
     <img
-         src="https://img.shields.io/github/stars/BLOCKOTUS/admins?logo=github&style=for-the-badge"
+         src="https://img.shields.io/github/stars/BLOCKOTUS/hyperledger-fabric-offline-transaction-signing?logo=github&style=for-the-badge"
      />
 </a>
 <a href="https://github.com/BLOCKOTUS/admins">
     <img
-         src="https://img.shields.io/github/license/BLOCKOTUS/admins?style=for-the-badge"
+         src="https://img.shields.io/github/license/BLOCKOTUS/hyperledger-fabric-offline-transaction-signing?style=for-the-badge"
      />
 </a>
 
