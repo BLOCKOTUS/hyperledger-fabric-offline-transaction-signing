@@ -1,5 +1,3 @@
-# Work In Progress - not stable
-
 <a href="https://twitter.com/BLOCKOTUS">
     <img
          src="https://img.shields.io/twitter/follow/BLOCKOTUS?style=for-the-badge&logo=twitter"
@@ -24,7 +22,7 @@
 <br />
 
 # || BLOCKOTUS || Offline Transaction Signing
-## Hyperledger Fabric
+## for Hyperledger Fabric
 
 <br />
 <br />
@@ -55,8 +53,11 @@
 > In most use cases an application will persist the user's credentials including the private key and sign transactions for the user. However some business scenarios may require higher level of privacy. What if the user wants to keep their private key secret and does not trust another system or backend server to securely store it and use it?
 
 > The fabric-common package comes with the ability to sign a transaction outside of the application. The application may choose to include the signature when calling the send method of the service instead of the identity context that would be used to create the signature. **[1]**
-## _Tool compatible with || BLOCKOTUS || Organism_
 
+<br />
+<br />
+
+## _Tool compatible with || BLOCKOTUS || Organism_
 
 Build complete decentralized applications with __Blockotus Open and Decentralized Standard__ and __Hyperledger Fabric__. 
 
@@ -74,6 +75,28 @@ The kit includes a Frontend (Svelte / React), a Backend (Nodejs / Express), a Ne
 <br />
 
 ## Documentation
+
+```javascript
+import { createUser, generateSignedProposal } from 'hyperledger-fabric-offline-transaction-signing';
+
+const user = createUser({
+  name, 
+  password,
+  mspid,
+  signedCertPem,
+  privateKeyPEM,
+});
+
+const signedProposal = generateSignedProposal({
+  client = 'blockotus',
+  user,
+  channel = 'mychannel',
+  chaincode,
+  fcn,
+  args,
+});
+```
+
 This repository is part of the [BLOCKOTUS Organism](https://github.com/BLOCKOTUS/organism).
 
 [BLOCKOTUS Architecture](https://github.com/BLOCKOTUS/organism/blob/master/docs/architecture.md)
