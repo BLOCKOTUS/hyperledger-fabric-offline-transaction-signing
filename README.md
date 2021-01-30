@@ -56,26 +56,6 @@
 
 > The fabric-common package comes with the ability to sign a transaction outside of the application. The application may choose to include the signature when calling the send method of the service instead of the identity context that would be used to create the signature. **[1]**
 
-<br />
-<br />
-
-## _Tool compatible with || BLOCKOTUS || Organism_
-
-Build complete decentralized applications with __Blockotus Open and Decentralized Standard__ and __Hyperledger Fabric__. 
-
-The kit includes a Frontend (Svelte / React), a Backend (Nodejs / Express), a Network and Chaincode Contracts (Hyperledger Fabric) as specified by Blockotus Open and Decentralized Standard.
-
-<br />
-<br />
-<br />
-
-<a href="https://github.com/hyperledger/fabric-sdk-node/tree/master/fabric-network">
-  <img src="https://img.shields.io/badge/fabric--network-%402.3.0-green?style=for-the-badge" />
-</a>
-
-<br />
-<br />
-
 ## Documentation
 
 ```javascript
@@ -102,6 +82,25 @@ const proposalResponse = await sendProposal({
 This repository is part of the [BLOCKOTUS Organism](https://github.com/BLOCKOTUS/organism).
 
 [BLOCKOTUS Architecture](https://github.com/BLOCKOTUS/organism/blob/master/docs/architecture.md)
+
+## _Tool compatible with || BLOCKOTUS || Organism_
+
+Build complete decentralized applications with __Blockotus Open and Decentralized Standard__ and __Hyperledger Fabric__. 
+
+The kit includes a Frontend (Svelte / React), a Backend (Nodejs / Express), a Network and Chaincode Contracts (Hyperledger Fabric) as specified by Blockotus Open and Decentralized Standard.
+
+[BLOCKOTUS Organism](https://github.com/BLOCKOTUS/organism).
+
+<br />
+<br />
+<br />
+
+<a href="https://github.com/hyperledger/fabric-sdk-node/tree/master/fabric-network">
+  <img src="https://img.shields.io/badge/fabric--network-%402.3.0-green?style=for-the-badge" />
+</a>
+
+<br />
+<br />
 
 ## References
 

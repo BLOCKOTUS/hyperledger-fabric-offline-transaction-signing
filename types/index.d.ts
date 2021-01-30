@@ -12,6 +12,7 @@ export type SendProposalArgs = {
     client?: Client | string,
     channel?: Channel | string,
     user: User,
+    privateKeyPEM: string,
     chaincode: string,
     fcn: string,
     args: Array<string>,
