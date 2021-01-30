@@ -72,6 +72,7 @@ const user = createUser({
 const proposalResponse = await sendProposal({
   client = 'blockotus',
   user,
+  privateKeyPEM,
   channel = 'mychannel',
   chaincode,
   fcn,
