@@ -8,7 +8,7 @@ export type CreateUserArgs = {
     privateKeyPEM?: string,
 };
 
-export type GenerateSignedProposalArgs = {
+export type SendProposalArgs = {
     client?: Client | string,
     channel?: Channel | string,
     user: User,

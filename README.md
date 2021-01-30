@@ -1,3 +1,5 @@
+# WIP - do not use yet
+
 <a href="https://twitter.com/BLOCKOTUS">
     <img
          src="https://img.shields.io/twitter/follow/BLOCKOTUS?style=for-the-badge&logo=twitter"
@@ -77,7 +79,7 @@ The kit includes a Frontend (Svelte / React), a Backend (Nodejs / Express), a Ne
 ## Documentation
 
 ```javascript
-import { createUser, generateSignedProposal } from 'hyperledger-fabric-offline-transaction-signing';
+import { createUser, sendProposal } from 'hyperledger-fabric-offline-transaction-signing';
 
 const user = createUser({
   name, 
@@ -87,7 +89,7 @@ const user = createUser({
   privateKeyPEM,
 });
 
-const signedProposal = generateSignedProposal({
+const proposalResponse = await sendProposal({
   client = 'blockotus',
   user,
   channel = 'mychannel',
