@@ -1,5 +1,3 @@
-# WIP - do not use yet
-
 <a href="https://twitter.com/BLOCKOTUS">
     <img
          src="https://img.shields.io/twitter/follow/BLOCKOTUS?style=for-the-badge&logo=twitter"

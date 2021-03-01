@@ -12,9 +12,9 @@ export const createUser = ({
     name, 
     password,
     mspid,
-    signedCertPem,
+    signedCertPEM,
     privateKeyPEM,
-}: CreateUserArgs): UserType => User.createUser(name, password, mspid, signedCertPem, privateKeyPEM);
+}: CreateUserArgs): UserType => User.createUser(name, password, mspid, signedCertPEM, privateKeyPEM);
 
 export const hashProposal = (proposalBytes: Buffer): string => {
     let md = new KJUR.crypto.MessageDigest({alg: "sha256", prov: "sjcl"});
