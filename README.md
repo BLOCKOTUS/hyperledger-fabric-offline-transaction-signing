@@ -105,4 +105,4 @@ The kit includes a Frontend (Svelte / React), a Backend (Nodejs / Express), a Ne
 
 ## References
 
- **[1]** <https://hyperledger.github.io/fabric-sdk-node/release-2.2/tutorial-sign-transaction-offline.html/>
+ **[1]** <https://hyperledger.github.io/fabric-sdk-node/release-2.2/tutorial-sign-transaction-offline.html>

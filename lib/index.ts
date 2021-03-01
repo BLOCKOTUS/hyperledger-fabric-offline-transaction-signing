@@ -1,6 +1,6 @@
 import { Client, User, Channel, ProposalResponse } from 'fabric-common';
-import { KJUR } from 'jsrsasign';
-import { KEYUTIL, ec, curves } from 'elliptic'; 
+import { KJUR, KEYUTIL } from 'jsrsasign';
+import elliptic from 'elliptic'; 
 
 import type { User as UserType } from 'fabric-common';
 import type { 
@@ -29,10 +29,10 @@ export const calculateSignature = ({
     privateKeyPEM: string,
     proposalDigest: string,
 }): Buffer => {
-    const { prvKeyHex } = KEYUTIL.getKey(privateKeyPEM); // convert the pem encoded key to hex encoded private key
-    const ecdsaCurve = curves['p256'];
-    const ecdsa = new ec(ecdsaCurve);
-    const signKey = ecdsa.keyFromPrivate(prvKeyHex, 'hex');
+    const key = KEYUTIL.getKey(privateKeyPEM); // convert the pem encoded key to hex encoded private key
+    const EC = elliptic.ec;
+    const ecdsa = new EC('p256');
+    const signKey = ecdsa.keyFromPrivate(key.prvKeyHex, 'hex');
     const sig = ecdsa.sign(Buffer.from(proposalDigest, 'hex'), signKey);
     const signature = Buffer.from(sig.toDER());
 
@@ -57,14 +57,14 @@ export const sendProposal = async ({
 
     // build the proposal
     const endorsement = appChannel.newEndorsement(chaincode);
-    const build_options = {fcn, args};
+    const build_options = { fcn, args };
     const proposalBytes = endorsement.build(idx, build_options);
 
     // hash the proposal
     const proposalDigest = hashProposal(proposalBytes);
 
     // calculate the signature
-    const signature = calculateSignature({privateKeyPEM, proposalDigest});
+    const signature = calculateSignature({ privateKeyPEM, proposalDigest });
 
     // sign the proposal endorsment
     endorsement.sign(signature);

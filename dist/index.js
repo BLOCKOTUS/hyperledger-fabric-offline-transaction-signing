@@ -49,7 +49,7 @@ var calculateSignature = function calculateSignature(_ref2) {
   var privateKeyPEM = _ref2.privateKeyPEM,
       proposalDigest = _ref2.proposalDigest;
 
-  var _KEYUTIL$getKey = _elliptic.KEYUTIL.getKey(privateKeyPEM),
+  var _KEYUTIL$getKey = _jsrsasign.KEYUTIL.getKey(privateKeyPEM),
       prvKeyHex = _KEYUTIL$getKey.prvKeyHex; // convert the pem encoded key to hex encoded private key
 
 
