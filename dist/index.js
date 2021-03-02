@@ -21,9 +21,9 @@ var createUser = function createUser(_ref) {
   var name = _ref.name,
       password = _ref.password,
       mspid = _ref.mspid,
-      signedCertPem = _ref.signedCertPem,
+      signedCertPEM = _ref.signedCertPEM,
       privateKeyPEM = _ref.privateKeyPEM;
-  return _fabricCommon.User.createUser(name, password, mspid, signedCertPem, privateKeyPEM);
+  return _fabricCommon.User.createUser(name, password, mspid, signedCertPEM, privateKeyPEM);
 };
 
 exports.createUser = createUser;
@@ -88,7 +88,9 @@ var sendProposal = /*#__PURE__*/function () {
             endorsement.sign(signature); // send the proposal
 
             _context.next = 12;
-            return endorsement.send();
+            return endorsement.send({
+              targets: appChannel.getEndorsers()
+            });
 
           case 12:
             return _context.abrupt("return", _context.sent);

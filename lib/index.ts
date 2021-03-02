@@ -7,6 +7,7 @@ import type {
     SendProposalArgs,
     CreateUserArgs,
  } from '../types';
+import { networkInterfaces } from 'os';
 
 export const createUser = ({
     name, 
@@ -29,7 +30,7 @@ export const calculateSignature = ({
     privateKeyPEM: string,
     proposalDigest: string,
 }): Buffer => {
-    const key = KEYUTIL.getKey(privateKeyPEM); // convert the pem encoded key to hex encoded private key
+    const key = KEYUTIL.getKey(privateKeyPEM);
     const EC = elliptic.ec;
     const ecdsa = new EC('p256');
     const signKey = ecdsa.keyFromPrivate(key.prvKeyHex, 'hex');
@@ -70,5 +71,5 @@ export const sendProposal = async ({
     endorsement.sign(signature);
     
     // send the proposal
-    return await endorsement.send();
+    return await endorsement.send({ targets: appChannel.getEndorsers() });
 };

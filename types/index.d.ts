@@ -9,8 +9,8 @@ export type CreateUserArgs = {
 };
 
 export type SendProposalArgs = {
-    client?: Client | string,
-    channel?: Channel | string,
+    client: Client | string,
+    channel: Channel | string,
     user: User,
     privateKeyPEM: string,
     chaincode: string,
