@@ -5,7 +5,7 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.sendProposal = exports.calculateSignature = exports.hashProposal = exports.createUser = void 0;
+exports.sendProposal = void 0;
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
@@ -17,17 +17,6 @@ var _jsrsasign = require("jsrsasign");
 
 var _elliptic = _interopRequireDefault(require("elliptic"));
 
-var createUser = function createUser(_ref) {
-  var name = _ref.name,
-      password = _ref.password,
-      mspid = _ref.mspid,
-      signedCertPEM = _ref.signedCertPEM,
-      privateKeyPEM = _ref.privateKeyPEM;
-  return _fabricCommon.User.createUser(name, password, mspid, signedCertPEM, privateKeyPEM);
-};
-
-exports.createUser = createUser;
-
 var hashProposal = function hashProposal(proposalBytes) {
   var md = new _jsrsasign.KJUR.crypto.MessageDigest({
     alg: "sha256",
@@ -37,34 +26,45 @@ var hashProposal = function hashProposal(proposalBytes) {
   return md.digest();
 };
 
-exports.hashProposal = hashProposal;
+var calculateSignature = function calculateSignature(_ref) {
+  var privateKeyPEM = _ref.privateKeyPEM,
+      proposalDigest = _ref.proposalDigest;
 
-var calculateSignature = function calculateSignature(_ref2) {
-  var privateKeyPEM = _ref2.privateKeyPEM,
-      proposalDigest = _ref2.proposalDigest;
+  var key = _jsrsasign.KEYUTIL.getKey(privateKeyPEM);
 
-  var key = _jsrsasign.KEYUTIL.getKey(privateKeyPEM); // convert the pem encoded key to hex encoded private key
-
-
-  var EC = _elliptic["default"].ec;
-  var ecdsa = new EC('p256');
+  var ec = _elliptic["default"].ec;
+  var ecdsa = new ec('p256');
   var signKey = ecdsa.keyFromPrivate(key.prvKeyHex, 'hex');
   var sig = ecdsa.sign(Buffer.from(proposalDigest, 'hex'), signKey);
-  var signature = Buffer.from(sig.toDER());
+  var halfOrderSig = preventMalleability(sig, ecdsa);
+  var signature = Buffer.from(halfOrderSig.toDER());
   return signature;
 };
 
-exports.calculateSignature = calculateSignature;
+var preventMalleability = function preventMalleability(sig, ecdsa) {
+  var halfOrder = ecdsa.halfOrder;
+
+  if (!halfOrder) {
+    throw new Error('Can not find the half order needed to calculate "s" value for immalleable signatures. Unsupported curve name: ' + curveParams.name);
+  }
+
+  if (sig.s.cmp(halfOrder) === 1) {
+    var bigNum = ecdsa.order;
+    sig.s = bigNum.sub(sig.s);
+  }
+
+  return sig;
+};
 
 var sendProposal = /*#__PURE__*/function () {
-  var _ref4 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(_ref3) {
-    var _ref3$client, client, user, privateKeyPEM, _ref3$channel, channel, chaincode, fcn, args, appClient, appChannel, idx, endorsement, build_options, proposalBytes, proposalDigest, signature;
+  var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(_ref2) {
+    var _ref2$client, client, user, privateKeyPEM, _ref2$channel, channel, chaincode, fcn, args, appClient, appChannel, idx, endorsement, build_options, proposalBytes, proposalDigest, signature;
 
     return _regenerator["default"].wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            _ref3$client = _ref3.client, client = _ref3$client === void 0 ? 'blockotus' : _ref3$client, user = _ref3.user, privateKeyPEM = _ref3.privateKeyPEM, _ref3$channel = _ref3.channel, channel = _ref3$channel === void 0 ? 'mychannel' : _ref3$channel, chaincode = _ref3.chaincode, fcn = _ref3.fcn, args = _ref3.args;
+            _ref2$client = _ref2.client, client = _ref2$client === void 0 ? 'blockotus' : _ref2$client, user = _ref2.user, privateKeyPEM = _ref2.privateKeyPEM, _ref2$channel = _ref2.channel, channel = _ref2$channel === void 0 ? 'mychannel' : _ref2$channel, chaincode = _ref2.chaincode, fcn = _ref2.fcn, args = _ref2.args;
             // retrieve Client and Channel
             appClient = typeof client === 'string' ? new _fabricCommon.Client(client) : client;
             appChannel = typeof channel === 'string' ? new _fabricCommon.Channel(channel, appClient) : channel; // create an identity context
@@ -104,7 +104,7 @@ var sendProposal = /*#__PURE__*/function () {
   }));
 
   return function sendProposal(_x) {
-    return _ref4.apply(this, arguments);
+    return _ref3.apply(this, arguments);
   };
 }();
 

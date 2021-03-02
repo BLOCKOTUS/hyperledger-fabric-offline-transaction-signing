@@ -1,6 +1,6 @@
 {
   "name": "hyperledger-fabric-offline-transaction-signing",
-  "version": "0.0.6",
+  "version": "0.0.8",
   "description": "Hyperledger Fabric offline transaction signing library. Sign a transaction outside of the application.",
   "main": "dist/index.js",
   "types": "types/index.d.ts",
