@@ -59,14 +59,6 @@
 ```javascript
 import { createUser, sendProposal } from 'hyperledger-fabric-offline-transaction-signing';
 
-const user = createUser({
-  name, 
-  password,
-  mspid,
-  signedCertPem,
-  privateKeyPEM,
-});
-
 const proposalResponse = await sendProposal({
   client = 'blockotus',
   user,

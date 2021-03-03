@@ -5,7 +5,6 @@ import elliptic from 'elliptic';
 import type { User as UserType } from 'fabric-common';
 import type { 
     SendProposalArgs,
-    CreateUserArgs,
  } from '../types';
 
 const hashProposal = (proposalBytes: Buffer): string => {
@@ -33,24 +32,19 @@ const calculateSignature = ({
 };
 
 const preventMalleability = (sig: any, ecdsa: any) => {
-    const halfOrder = ecdsa.halfOrder;
-    if (!halfOrder) {
-        throw new Error('Can not find the half order needed to calculate "s" value for immalleable signatures.');
-    }
-
+    const halfOrder = ecdsa.n.shrn(1);
     if (sig.s.cmp(halfOrder) === 1) {
-        const bigNum = ecdsa.order;
+        const bigNum = ecdsa.n;
         sig.s = bigNum.sub(sig.s);
     }
-
     return sig;
 };
 
-export const sendProposal = async ({
-    client = 'blockotus',
+export const sendProposal = ({
+    client,
     user,
     privateKeyPEM,
-    channel = 'mychannel',
+    channel,
     chaincode,
     fcn,
     args,
@@ -77,5 +71,5 @@ export const sendProposal = async ({
     endorsement.sign(signature);
     
     // send the proposal
-    return await endorsement.send({ targets: appChannel.getEndorsers() });
+    return endorsement.send({ targets: appChannel.getEndorsers() });
 };

@@ -7,10 +7,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.sendProposal = void 0;
 
-var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
-
-var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
-
 var _fabricCommon = require("fabric-common");
 
 var _jsrsasign = require("jsrsasign");
@@ -42,70 +38,49 @@ var calculateSignature = function calculateSignature(_ref) {
 };
 
 var preventMalleability = function preventMalleability(sig, ecdsa) {
-  var halfOrder = ecdsa.halfOrder;
-
-  if (!halfOrder) {
-    throw new Error('Can not find the half order needed to calculate "s" value for immalleable signatures. Unsupported curve name: ' + curveParams.name);
-  }
+  var halfOrder = ecdsa.n.shrn(1);
 
   if (sig.s.cmp(halfOrder) === 1) {
-    var bigNum = ecdsa.order;
+    var bigNum = ecdsa.n;
     sig.s = bigNum.sub(sig.s);
   }
 
   return sig;
 };
 
-var sendProposal = /*#__PURE__*/function () {
-  var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(_ref2) {
-    var _ref2$client, client, user, privateKeyPEM, _ref2$channel, channel, chaincode, fcn, args, appClient, appChannel, idx, endorsement, build_options, proposalBytes, proposalDigest, signature;
+var sendProposal = function sendProposal(_ref2) {
+  var client = _ref2.client,
+      user = _ref2.user,
+      privateKeyPEM = _ref2.privateKeyPEM,
+      channel = _ref2.channel,
+      chaincode = _ref2.chaincode,
+      fcn = _ref2.fcn,
+      args = _ref2.args;
+  // retrieve Client and Channel
+  var appClient = typeof client === 'string' ? new _fabricCommon.Client(client) : client;
+  var appChannel = typeof channel === 'string' ? new _fabricCommon.Channel(channel, appClient) : channel; // create an identity context
 
-    return _regenerator["default"].wrap(function _callee$(_context) {
-      while (1) {
-        switch (_context.prev = _context.next) {
-          case 0:
-            _ref2$client = _ref2.client, client = _ref2$client === void 0 ? 'blockotus' : _ref2$client, user = _ref2.user, privateKeyPEM = _ref2.privateKeyPEM, _ref2$channel = _ref2.channel, channel = _ref2$channel === void 0 ? 'mychannel' : _ref2$channel, chaincode = _ref2.chaincode, fcn = _ref2.fcn, args = _ref2.args;
-            // retrieve Client and Channel
-            appClient = typeof client === 'string' ? new _fabricCommon.Client(client) : client;
-            appChannel = typeof channel === 'string' ? new _fabricCommon.Channel(channel, appClient) : channel; // create an identity context
+  var idx = appClient.newIdentityContext(user); // build the proposal
 
-            idx = appClient.newIdentityContext(user); // build the proposal
-
-            endorsement = appChannel.newEndorsement(chaincode);
-            build_options = {
-              fcn: fcn,
-              args: args
-            };
-            proposalBytes = endorsement.build(idx, build_options); // hash the proposal
-
-            proposalDigest = hashProposal(proposalBytes); // calculate the signature
-
-            signature = calculateSignature({
-              privateKeyPEM: privateKeyPEM,
-              proposalDigest: proposalDigest
-            }); // sign the proposal endorsment
-
-            endorsement.sign(signature); // send the proposal
-
-            _context.next = 12;
-            return endorsement.send({
-              targets: appChannel.getEndorsers()
-            });
-
-          case 12:
-            return _context.abrupt("return", _context.sent);
-
-          case 13:
-          case "end":
-            return _context.stop();
-        }
-      }
-    }, _callee);
-  }));
-
-  return function sendProposal(_x) {
-    return _ref3.apply(this, arguments);
+  var endorsement = appChannel.newEndorsement(chaincode);
+  var build_options = {
+    fcn: fcn,
+    args: args
   };
-}();
+  var proposalBytes = endorsement.build(idx, build_options); // hash the proposal
+
+  var proposalDigest = hashProposal(proposalBytes); // calculate the signature
+
+  var signature = calculateSignature({
+    privateKeyPEM: privateKeyPEM,
+    proposalDigest: proposalDigest
+  }); // sign the proposal endorsment
+
+  endorsement.sign(signature); // send the proposal
+
+  return endorsement.send({
+    targets: appChannel.getEndorsers()
+  });
+};
 
 exports.sendProposal = sendProposal;
