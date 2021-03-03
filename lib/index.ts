@@ -1,17 +1,10 @@
-import { Client, User, Channel, ProposalResponse } from 'fabric-common';
-import { KJUR, KEYUTIL } from 'jsrsasign';
+import { Client, Channel, ProposalResponse } from 'fabric-common';
+import { KEYUTIL } from 'jsrsasign';
 import elliptic from 'elliptic'; 
 
-import type { User as UserType } from 'fabric-common';
 import type { 
     SendProposalArgs,
  } from '../types';
-
-const hashProposal = (proposalBytes: Buffer): string => {
-    let md = new KJUR.crypto.MessageDigest({alg: "sha256", prov: "sjcl"});
-    md.updateString(proposalBytes);
-    return md.digest();
-};
 
 const calculateSignature = ({
     privateKeyPEM,
@@ -62,7 +55,7 @@ export const sendProposal = ({
     const proposalBytes = endorsement.build(idx, build_options);
 
     // hash the proposal
-    const proposalDigest = hashProposal(proposalBytes);
+    const proposalDigest = user.getCryptoSuite().hash(proposalBytes.toString(), null);
 
     // calculate the signature
     const signature = calculateSignature({ privateKeyPEM, proposalDigest });

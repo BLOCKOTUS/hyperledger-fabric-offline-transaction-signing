@@ -69,7 +69,7 @@ var sendProposal = function sendProposal(_ref2) {
   };
   var proposalBytes = endorsement.build(idx, build_options); // hash the proposal
 
-  var proposalDigest = hashProposal(proposalBytes); // calculate the signature
+  var proposalDigest = user.getCryptoSuite().hash(proposalBytes.toString(), null); // calculate the signature
 
   var signature = calculateSignature({
     privateKeyPEM: privateKeyPEM,
