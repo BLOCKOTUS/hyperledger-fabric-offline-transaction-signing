@@ -1,26 +1,13 @@
 "use strict";
 
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.sendProposal = void 0;
 
-var _fabricCommon = require("fabric-common");
-
 var _jsrsasign = require("jsrsasign");
 
-var _elliptic = _interopRequireDefault(require("elliptic"));
-
-var hashProposal = function hashProposal(proposalBytes) {
-  var md = new _jsrsasign.KJUR.crypto.MessageDigest({
-    alg: "sha256",
-    prov: "sjcl"
-  });
-  md.updateString(proposalBytes);
-  return md.digest();
-};
+var _elliptic = require("elliptic");
 
 var calculateSignature = function calculateSignature(_ref) {
   var privateKeyPEM = _ref.privateKeyPEM,
@@ -28,8 +15,7 @@ var calculateSignature = function calculateSignature(_ref) {
 
   var key = _jsrsasign.KEYUTIL.getKey(privateKeyPEM);
 
-  var ec = _elliptic["default"].ec;
-  var ecdsa = new ec('p256');
+  var ecdsa = new _elliptic.ec('p256');
   var signKey = ecdsa.keyFromPrivate(key.prvKeyHex, 'hex');
   var sig = ecdsa.sign(Buffer.from(proposalDigest, 'hex'), signKey);
   var halfOrderSig = preventMalleability(sig, ecdsa);
@@ -56,30 +42,38 @@ var sendProposal = function sendProposal(_ref2) {
       chaincode = _ref2.chaincode,
       fcn = _ref2.fcn,
       args = _ref2.args;
-  // retrieve Client and Channel
-  var appClient = typeof client === 'string' ? new _fabricCommon.Client(client) : client;
-  var appChannel = typeof channel === 'string' ? new _fabricCommon.Channel(channel, appClient) : channel; // create an identity context
+  // create an identity context
+  var idx = client.newIdentityContext(user); // build the proposal
 
-  var idx = appClient.newIdentityContext(user); // build the proposal
-
-  var endorsement = appChannel.newEndorsement(chaincode);
+  var endorsement = channel.newEndorsement(chaincode);
   var build_options = {
     fcn: fcn,
-    args: args
+    args: args,
+    chaincodeId: chaincode,
+    channelId: channel.name
   };
-  var proposalBytes = endorsement.build(idx, build_options); // hash the proposal
+  var proposalBytes = endorsement.build(idx, build_options);
+  console.log({
+    proposalBytes: proposalBytes.toString()
+  }); // hash the proposal
 
-  var proposalDigest = user.getCryptoSuite().hash(proposalBytes.toString(), null); // calculate the signature
+  var proposalDigest = user.getCryptoSuite().hash(proposalBytes.toString(), null);
+  console.log({
+    proposalDigest: proposalDigest
+  }); // calculate the signature
 
   var signature = calculateSignature({
     privateKeyPEM: privateKeyPEM,
     proposalDigest: proposalDigest
+  });
+  console.log({
+    signature: signature.toString()
   }); // sign the proposal endorsment
 
   endorsement.sign(signature); // send the proposal
 
   return endorsement.send({
-    targets: appChannel.getEndorsers()
+    targets: channel.getEndorsers()
   });
 };
 

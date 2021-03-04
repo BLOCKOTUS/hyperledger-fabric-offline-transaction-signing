@@ -1,10 +1,11 @@
-import { Client, Channel, ProposalResponse } from 'fabric-common';
 import { KEYUTIL } from 'jsrsasign';
-import elliptic from 'elliptic'; 
+import { ec } from 'elliptic'; 
+
+import type { ProposalResponse } from 'fabric-common';
 
 import type { 
     SendProposalArgs,
- } from '../types';
+} from '../types';
 
 const calculateSignature = ({
     privateKeyPEM,
@@ -14,7 +15,6 @@ const calculateSignature = ({
     proposalDigest: string,
 }): Buffer => {
     const key = KEYUTIL.getKey(privateKeyPEM);
-    const ec = elliptic.ec;
     const ecdsa = new ec('p256');
     const signKey = ecdsa.keyFromPrivate(key.prvKeyHex, 'hex');
     const sig = ecdsa.sign(Buffer.from(proposalDigest, 'hex'), signKey);
@@ -42,27 +42,27 @@ export const sendProposal = ({
     fcn,
     args,
 }: SendProposalArgs): Promise<ProposalResponse> => {
-    // retrieve Client and Channel
-    const appClient = typeof client === 'string' ? new Client(client) : client;
-    const appChannel = typeof channel === 'string' ? new Channel(channel, appClient) : channel;
-
     // create an identity context
-    const idx = appClient.newIdentityContext(user);
+    client.setTlsClientCertAndKey('', ''); // still having issues with signature, gonna try this later, then try payload
+    const idx = client.newIdentityContext(user);
 
     // build the proposal
-    const endorsement = appChannel.newEndorsement(chaincode);
+    const endorsement = channel.newEndorsement(chaincode);
     const build_options = { fcn, args };
     const proposalBytes = endorsement.build(idx, build_options);
+    console.log({proposalBytes: proposalBytes.toString()});
 
     // hash the proposal
     const proposalDigest = user.getCryptoSuite().hash(proposalBytes.toString(), null);
+    console.log({proposalDigest});
 
     // calculate the signature
     const signature = calculateSignature({ privateKeyPEM, proposalDigest });
+    console.log({signature: signature.toString()});
 
     // sign the proposal endorsment
     endorsement.sign(signature);
     
     // send the proposal
-    return endorsement.send({ targets: appChannel.getEndorsers() });
+    return endorsement.send({ targets: channel.getEndorsers() });
 };
