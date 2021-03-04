@@ -60,10 +60,10 @@
 import { createUser, sendProposal } from 'hyperledger-fabric-offline-transaction-signing';
 
 const proposalResponse = await sendProposal({
-  client = 'blockotus',
+  client,
   user,
   privateKeyPEM,
-  channel = 'mychannel',
+  channel,
   chaincode,
   fcn,
   args,
