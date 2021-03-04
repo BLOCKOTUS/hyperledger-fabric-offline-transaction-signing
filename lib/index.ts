@@ -20,7 +20,6 @@ const calculateSignature = ({
     const sig = ecdsa.sign(Buffer.from(proposalDigest, 'hex'), signKey);
     const halfOrderSig = preventMalleability(sig, ecdsa);
     const signature = Buffer.from(halfOrderSig.toDER());
-
     return signature;
 };
 
@@ -43,26 +42,22 @@ export const sendProposal = ({
     args,
 }: SendProposalArgs): Promise<ProposalResponse> => {
     // create an identity context
-    client.setTlsClientCertAndKey('', ''); // still having issues with signature, gonna try this later, then try payload
     const idx = client.newIdentityContext(user);
 
     // build the proposal
     const endorsement = channel.newEndorsement(chaincode);
     const build_options = { fcn, args };
     const proposalBytes = endorsement.build(idx, build_options);
-    console.log({proposalBytes: proposalBytes.toString()});
 
     // hash the proposal
-    const proposalDigest = user.getCryptoSuite().hash(proposalBytes.toString(), null);
-    console.log({proposalDigest});
+    const proposalDigest = user.getCryptoSuite().hash(proposalBytes.toString(), { algorithm: 'SHA2' });
 
     // calculate the signature
     const signature = calculateSignature({ privateKeyPEM, proposalDigest });
-    console.log({signature: signature.toString()});
 
     // sign the proposal endorsment
     endorsement.sign(signature);
-    
+
     // send the proposal
     return endorsement.send({ targets: channel.getEndorsers() });
 };

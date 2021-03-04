@@ -43,21 +43,23 @@ var sendProposal = function sendProposal(_ref2) {
       fcn = _ref2.fcn,
       args = _ref2.args;
   // create an identity context
+  client.setTlsClientCertAndKey('', ''); // still having issues with signature, gonna try this later, then try payload
+
   var idx = client.newIdentityContext(user); // build the proposal
 
   var endorsement = channel.newEndorsement(chaincode);
   var build_options = {
     fcn: fcn,
-    args: args,
-    chaincodeId: chaincode,
-    channelId: channel.name
+    args: args
   };
   var proposalBytes = endorsement.build(idx, build_options);
   console.log({
     proposalBytes: proposalBytes.toString()
   }); // hash the proposal
 
-  var proposalDigest = user.getCryptoSuite().hash(proposalBytes.toString(), null);
+  var proposalDigest = user.getCryptoSuite().hash(proposalBytes.toString(), {
+    algorithm: 'SHA2'
+  });
   console.log({
     proposalDigest: proposalDigest
   }); // calculate the signature
@@ -70,7 +72,15 @@ var sendProposal = function sendProposal(_ref2) {
     signature: signature.toString()
   }); // sign the proposal endorsment
 
-  endorsement.sign(signature); // send the proposal
+  endorsement.sign(signature);
+  var transactionId = endorsement.getTransactionId();
+  console.log({
+    transactionId: transactionId
+  });
+  var signedProposal = endorsement.getSignedProposal();
+  console.log({
+    signedProposal: signedProposal
+  }); // send the proposal
 
   return endorsement.send({
     targets: channel.getEndorsers()
